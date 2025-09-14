@@ -2,7 +2,7 @@
 
 > Minimalistic `.env` rider for PHP projects
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/codemonster/env.svg?style=flat-square)](https://packagist.org/packages/codemonster/env)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/codemonster/env.svg?style=flat-square)](https://packagist.org/packages/codemonster-ru/env)
 [![Tests](https://github.com/codemonster-ru/env/actions/workflows/tests.yml/badge.svg)](https://github.com/codemonster-ru/env/actions)
 
 ## Installation
