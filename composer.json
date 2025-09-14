@@ -2,6 +2,13 @@
     "name": "codemonster-ru/env",
     "description": "Lightweight .env loader for PHP projects",
     "type": "library",
+    "keywords": [
+        "php",
+        "env",
+        "dotenv",
+        "environment"
+    ],
+    "homepage": "https://github.com/codemonster-ru/env-php",
     "license": "MIT",
     "authors": [
         {
