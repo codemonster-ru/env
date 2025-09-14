@@ -3,6 +3,14 @@
     "description": "Lightweight .env loader for PHP projects",
     "type": "library",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Kirill Kolesnikov",
+            "email": "admin@codemonster.ru",
+            "homepage": "https://github.com/KolesnikovKirill",
+            "role": "Lead Developer"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Codemonster\\": "src/"
