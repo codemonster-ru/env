@@ -1,0 +1,23 @@
+{
+    "name": "codemonster-ru/env",
+    "description": "Lightweight .env loader for PHP projects",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Codemonster\\": "src/"
+        },
+        "files": [
+            "helpers.php"
+        ]
+    },
+    "require": {
+        "php": ">=8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.3"
+    },
+    "scripts": {
+        "test": "phpunit --colors=always"
+    }
+}
