@@ -12,7 +12,7 @@
 Via [Composer](https://getcomposer.org):
 
 ```bash
-composer require codemonster/env
+composer require codemonster-ru/env
 ```
 
 ## Usage
