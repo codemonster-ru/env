@@ -4,20 +4,13 @@ namespace Codemonster;
 
 class Env
 {
-    protected string $path;
-
-    public function __construct(string $path)
+    public static function load(string $path): void
     {
         if (!is_file($path)) {
             throw new \InvalidArgumentException("Env file not found: $path");
         }
 
-        $this->path = $path;
-    }
-
-    public function load(): void
-    {
-        $lines = file($this->path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         foreach ($lines as $line) {
             if (str_starts_with(trim($line), '#')) {

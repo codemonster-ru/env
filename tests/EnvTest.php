@@ -7,8 +7,7 @@ class EnvTest extends TestCase
 {
     public function testEnvLoadsVariables()
     {
-        $env = new Env(__DIR__ . '/.env.example');
-        $env->load();
+        Env::load(__DIR__ . '/.env.example');
 
         $this->assertEquals('MyApp', env('APP_NAME'));
     }
