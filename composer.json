@@ -2,14 +2,8 @@
     "name": "codemonster-ru/env",
     "description": "Lightweight .env loader for PHP projects",
     "type": "library",
-    "keywords": [
-        "php",
-        "env",
-        "dotenv",
-        "environment"
-    ],
-    "homepage": "https://github.com/codemonster-ru/env-php",
     "license": "MIT",
+    "homepage": "https://github.com/codemonster-ru/env-php",
     "authors": [
         {
             "name": "Kirill Kolesnikov",
@@ -23,7 +17,7 @@
             "Codemonster\\": "src/"
         },
         "files": [
-            "helpers.php"
+            "src/helpers.php"
         ]
     },
     "require": {
@@ -33,6 +27,19 @@
         "phpunit/phpunit": "^9.6 || ^10.5 || ^11.0 || ^12.0"
     },
     "scripts": {
-        "test": "phpunit --colors=always"
+        "test": "phpunit --colors=always --testdox"
+    },
+    "keywords": [
+        "php",
+        "env",
+        "dotenv",
+        "environment",
+        "configuration",
+        "settings",
+        "loader"
+    ],
+    "support": {
+        "issues": "https://github.com/codemonster-ru/env-php/issues",
+        "source": "https://github.com/codemonster-ru/env-php"
     }
 }
