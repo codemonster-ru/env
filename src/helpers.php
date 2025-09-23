@@ -1,6 +1,6 @@
 <?php
 
-use Codemonster\Env;
+use Codemonster\Env\Env;
 
 if (!function_exists('env')) {
     function env(string $key, mixed $default = null): mixed

@@ -7,6 +7,13 @@ and this project follows [Semantic Versioning](https://semver.org/lang/ru/).
 
 ## [Unreleased]
 
+## [1.1.1] - 2025-09-24
+
+### Changed
+
+-   Namespace changed from `Codemonster` to `Codemonster\Env`.
+-   Added support for tests with single and double quotes (`'...'` and `"..."`) in `.env`.
+
 ## [1.1.0] - 2025-09-23
 
 ### Added
@@ -33,5 +40,6 @@ and this project follows [Semantic Versioning](https://semver.org/lang/ru/).
 ---
 
 [Unreleased]: https://github.com/codemonster-ru/env-php/compare/v1.1.0...HEAD
+[1.1.1]: https://github.com/codemonster-ru/env-php/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/codemonster-ru/env-php/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/codemonster-ru/env-php/releases/tag/v1.0.0

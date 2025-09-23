@@ -14,7 +14,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Codemonster\\": "src/"
+            "Codemonster\\Env\\": "src/"
         },
         "files": [
             "src/helpers.php"

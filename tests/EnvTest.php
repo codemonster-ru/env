@@ -1,12 +1,26 @@
 <?php
 
-use Codemonster\Env;
+use Codemonster\Env\Env;
 use PHPUnit\Framework\TestCase;
 
 class EnvTest extends TestCase
 {
     protected function setUp(): void
     {
+        foreach ([
+            'APP_NAME',
+            'FEATURE_ENABLED',
+            'FEATURE_DISABLED',
+            'OPTIONAL_VALUE',
+            'EMPTY_VALUE',
+            'SSR_URL',
+            'QUOTED_SINGLE',
+            'QUOTED_DOUBLE'
+        ] as $key) {
+            unset($_ENV[$key], $_SERVER[$key]);
+            putenv($key);
+        }
+
         Env::load(__DIR__ . '/.env.example');
     }
 
@@ -34,6 +48,12 @@ class EnvTest extends TestCase
     public function testEnvRemovesQuotes(): void
     {
         $this->assertSame('http://localhost:3000', env('SSR_URL'));
+    }
+
+    public function testEnvHandlesSingleAndDoubleQuotes(): void
+    {
+        $this->assertSame('Hello Single', env('QUOTED_SINGLE'));
+        $this->assertSame('Hello Double', env('QUOTED_DOUBLE'));
     }
 
     public function testEnvReturnsDefaultIfNotSet(): void

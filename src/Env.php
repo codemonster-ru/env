@@ -1,6 +1,6 @@
 <?php
 
-namespace Codemonster;
+namespace Codemonster\Env;
 
 class Env
 {
