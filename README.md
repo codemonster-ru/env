@@ -35,7 +35,7 @@ Load .env in your app:
 
 require __DIR__ . '/vendor/autoload.php';
 
-use Codemonster\Env;
+use Codemonster\Env\Env;
 
 Env::load(__DIR__ . '/.env');
 
