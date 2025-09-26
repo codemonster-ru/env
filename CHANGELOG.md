@@ -39,7 +39,7 @@ and this project follows [Semantic Versioning](https://semver.org/lang/ru/).
 
 ---
 
-[Unreleased]: https://github.com/codemonster-ru/env-php/compare/v1.1.0...HEAD
-[1.1.1]: https://github.com/codemonster-ru/env-php/compare/v1.1.0...v1.1.1
-[1.1.0]: https://github.com/codemonster-ru/env-php/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/codemonster-ru/env-php/releases/tag/v1.0.0
+[Unreleased]: https://github.com/codemonster-ru/env/compare/v1.1.0...HEAD
+[1.1.1]: https://github.com/codemonster-ru/env/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/codemonster-ru/env/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/codemonster-ru/env/releases/tag/v1.0.0
