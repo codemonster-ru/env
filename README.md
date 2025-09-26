@@ -7,7 +7,7 @@
 
 A simple and lightweight `.env` loader for PHP projects.
 
-## Installation
+## 📦 Installation
 
 Via Composer:
 
@@ -15,7 +15,7 @@ Via Composer:
 composer require codemonster-ru/env
 ```
 
-## Usage
+## 🚀 Usage
 
 Create a .env file in the root of your project:
 
@@ -48,7 +48,7 @@ echo env('SSR_URL'); // http://localhost:3000
 echo env('NOT_DEFINED', 'default'); // "default"
 ```
 
-## Features
+## ✨ Features
 
 -   Loading `.env` files into `$_ENV`, `$_SERVER`, and via `putenv()`.
 -   Boolean value support:
@@ -60,7 +60,7 @@ echo env('NOT_DEFINED', 'default'); // "default"
 -   Support for quoted strings `"..."` and `'...'`.
 -   Global function `env($key, $default = null)`.
 
-## Tests
+## 🧪 Testing
 
 You can run tests with the command:
 
@@ -68,10 +68,10 @@ You can run tests with the command:
 composer test
 ```
 
-## Author
+## 👨‍💻 Author
 
 [**Kirill Kolesnikov**](https://github.com/KolesnikovKirill)
 
-## License
+## 📜 License
 
 [MIT](https://github.com/codemonster-ru/env/blob/main/LICENSE)
