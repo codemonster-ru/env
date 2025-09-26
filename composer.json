@@ -3,7 +3,7 @@
     "description": "Lightweight .env loader for PHP projects",
     "type": "library",
     "license": "MIT",
-    "homepage": "https://github.com/codemonster-ru/env-php",
+    "homepage": "https://github.com/codemonster-ru/env",
     "authors": [
         {
             "name": "Kirill Kolesnikov",
@@ -39,7 +39,7 @@
         "loader"
     ],
     "support": {
-        "issues": "https://github.com/codemonster-ru/env-php/issues",
-        "source": "https://github.com/codemonster-ru/env-php"
+        "issues": "https://github.com/codemonster-ru/env/issues",
+        "source": "https://github.com/codemonster-ru/env"
     }
 }
