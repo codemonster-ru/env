@@ -3,7 +3,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/codemonster-ru/env.svg?style=flat-square)](https://packagist.org/packages/codemonster-ru/env)
 [![Total Downloads](https://img.shields.io/packagist/dt/codemonster-ru/env.svg?style=flat-square)](https://packagist.org/packages/codemonster-ru/env)
 [![License](https://img.shields.io/packagist/l/codemonster-ru/env.svg?style=flat-square)](https://packagist.org/packages/codemonster-ru/env)
-[![Tests](https://github.com/codemonster-ru/env-php/actions/workflows/tests.yml/badge.svg)](https://github.com/codemonster-ru/env-php/actions/workflows/tests.yml)
+[![Tests](https://github.com/codemonster-ru/env/actions/workflows/tests.yml/badge.svg)](https://github.com/codemonster-ru/env/actions/workflows/tests.yml)
 
 A simple and lightweight `.env` loader for PHP projects.
 
@@ -74,4 +74,4 @@ composer test
 
 ## License
 
-[MIT](https://github.com/codemonster-ru/env-php/blob/main/LICENSE)
+[MIT](https://github.com/codemonster-ru/env/blob/main/LICENSE)
