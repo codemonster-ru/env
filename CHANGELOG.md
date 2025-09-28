@@ -2,10 +2,13 @@
 
 All notable changes to this package will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
-and this project follows [Semantic Versioning](https://semver.org/lang/ru/).
-
 ## [Unreleased]
+
+## [2.0.0] - 2025-09-28
+
+### Changed
+
+-   Raised minimum PHP version to >= 8.2. No public API changes.
 
 ## [1.1.1] - 2025-09-24
 
@@ -36,10 +39,3 @@ and this project follows [Semantic Versioning](https://semver.org/lang/ru/).
 
 -   The first stable version of the `codemonster-ru/env` package.
 -   The `Env::load($path)` method for loading the `.env` file into the environment.
-
----
-
-[Unreleased]: https://github.com/codemonster-ru/env/compare/v1.1.0...HEAD
-[1.1.1]: https://github.com/codemonster-ru/env/compare/v1.1.0...v1.1.1
-[1.1.0]: https://github.com/codemonster-ru/env/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/codemonster-ru/env/releases/tag/v1.0.0
