@@ -4,6 +4,27 @@ All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.1] - 2025-10-05
+
+### Fixed
+
+-   Removed global `env()` helper from the package to keep framework-level responsibility in `codemonster-ru/annabel`.
+-   The package now exposes only the static API through `Codemonster\Env\Env`.
+
+### Docs
+
+-   Updated `README.md` to reflect the removal of the global helper.
+    Examples now use `Env::get()` instead of `env()`.
+
+### Tests
+
+-   Updated all tests to use `Env::get()` instead of the removed global `env()` helper.
+
+### Internal
+
+-   Verified autoload configuration in `composer.json` (removed helper file registration).
+-   No API-breaking changes; patch-level release only.
+
 ## [2.0.0] - 2025-09-28
 
 ### Changed

@@ -26,39 +26,39 @@ class EnvTest extends TestCase
 
     public function testEnvLoadsString(): void
     {
-        $this->assertSame('MyApp', env('APP_NAME'));
+        $this->assertSame('MyApp', Env::get('APP_NAME'));
     }
 
     public function testEnvCastsTrueFalse(): void
     {
-        $this->assertTrue(env('FEATURE_ENABLED'));
-        $this->assertFalse(env('FEATURE_DISABLED'));
+        $this->assertTrue(Env::get('FEATURE_ENABLED'));
+        $this->assertFalse(Env::get('FEATURE_DISABLED'));
     }
 
     public function testEnvCastsNull(): void
     {
-        $this->assertNull(env('OPTIONAL_VALUE'));
+        $this->assertNull(Env::get('OPTIONAL_VALUE'));
     }
 
     public function testEnvCastsEmpty(): void
     {
-        $this->assertSame('', env('EMPTY_VALUE'));
+        $this->assertSame('', Env::get('EMPTY_VALUE'));
     }
 
     public function testEnvRemovesQuotes(): void
     {
-        $this->assertSame('http://localhost:3000', env('SSR_URL'));
+        $this->assertSame('http://localhost:3000', Env::get('SSR_URL'));
     }
 
     public function testEnvHandlesSingleAndDoubleQuotes(): void
     {
-        $this->assertSame('Hello Single', env('QUOTED_SINGLE'));
-        $this->assertSame('Hello Double', env('QUOTED_DOUBLE'));
+        $this->assertSame('Hello Single', Env::get('QUOTED_SINGLE'));
+        $this->assertSame('Hello Double', Env::get('QUOTED_DOUBLE'));
     }
 
     public function testEnvReturnsDefaultIfNotSet(): void
     {
-        $this->assertSame('default', env('NOT_DEFINED', 'default'));
+        $this->assertSame('default', Env::get('NOT_DEFINED', 'default'));
     }
 
     public function testEnvDoesNotOverrideExisting(): void
@@ -67,6 +67,6 @@ class EnvTest extends TestCase
 
         Env::load(__DIR__ . '/.env.example');
 
-        $this->assertSame('ManualApp', env('APP_NAME'));
+        $this->assertSame('ManualApp', Env::get('APP_NAME'));
     }
 }

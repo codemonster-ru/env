@@ -17,7 +17,7 @@ composer require codemonster-ru/env
 
 ## 🚀 Usage
 
-Create a .env file in the root of your project:
+Create a `.env` file in the root of your project:
 
 ```dotenv
 APP_NAME=MyApp
@@ -37,15 +37,17 @@ require __DIR__ . '/vendor/autoload.php';
 
 use Codemonster\Env\Env;
 
+// Load environment variables from .env
 Env::load(__DIR__ . '/.env');
 
-echo env('APP_NAME'); // "MyApp"
-var_dump(env('FEATURE_ENABLED')); // true (bool)
-var_dump(env('FEATURE_DISABLED')); // false (bool)
-var_dump(env('OPTIONAL_VALUE')); // null
-var_dump(env('EMPTY_VALUE')); // ""
-echo env('SSR_URL'); // http://localhost:3000
-echo env('NOT_DEFINED', 'default'); // "default"
+// Access values via Env::get()
+echo Env::get('APP_NAME'); // "MyApp"
+var_dump(Env::get('FEATURE_ENABLED')); // true (bool)
+var_dump(Env::get('FEATURE_DISABLED')); // false (bool)
+var_dump(Env::get('OPTIONAL_VALUE')); // null
+var_dump(Env::get('EMPTY_VALUE')); // ""
+echo Env::get('SSR_URL'); // http://localhost:3000
+echo Env::get('NOT_DEFINED', 'default'); // "default"
 ```
 
 ## ✨ Features

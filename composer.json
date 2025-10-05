@@ -4,6 +4,7 @@
     "type": "library",
     "license": "MIT",
     "homepage": "https://github.com/codemonster-ru/env",
+    "readme": "README.md",
     "authors": [
         {
             "name": "Kirill Kolesnikov",
@@ -15,10 +16,7 @@
     "autoload": {
         "psr-4": {
             "Codemonster\\Env\\": "src/"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
+        }
     },
     "require": {
         "php": ">=8.2"

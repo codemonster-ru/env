@@ -28,6 +28,7 @@ class Env
             if (!array_key_exists($name, $_ENV) && !array_key_exists($name, $_SERVER)) {
                 $_ENV[$name] = $value;
                 $_SERVER[$name] = $value;
+
                 putenv("$name=$value");
             }
         }
