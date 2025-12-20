@@ -7,7 +7,7 @@
 
 A simple and lightweight `.env` loader for PHP projects.
 
-## 📦 Installation
+## Installation
 
 Via Composer:
 
@@ -15,7 +15,7 @@ Via Composer:
 composer require codemonster-ru/env
 ```
 
-## 🚀 Usage
+## Usage
 
 Create a `.env` file in the root of your project:
 
@@ -26,6 +26,11 @@ FEATURE_DISABLED=false
 OPTIONAL_VALUE=null
 EMPTY_VALUE=empty
 SSR_URL="http://localhost:3000"
+WITH_SPACES = spaced value
+INLINE_COMMENT=works # comment
+ESCAPED_HASH=foo\#bar
+MULTILINE="line1\nline2"
+export EXPORTED_VALUE=exported
 ```
 
 Load .env in your app:
@@ -50,19 +55,18 @@ echo Env::get('SSR_URL'); // http://localhost:3000
 echo Env::get('NOT_DEFINED', 'default'); // "default"
 ```
 
-## ✨ Features
+## Features
 
 -   Loading `.env` files into `$_ENV`, `$_SERVER`, and via `putenv()`.
--   Boolean value support:
--   `true`, `(true)` → `true`
--   `false`, `(false)` → `false`
--   Support for `null` and `empty`:
--   `null`, `(null)` → `null`
--   `empty`, `(empty)` → `""`
--   Support for quoted strings `"..."` and `'...'`.
--   Global function `env($key, $default = null)`.
+-   Does not override variables already present in `$_ENV`, `$_SERVER`, or `getenv()`.
+-   Boolean casting for `true`, `(true)`, `false`, `(false)`.
+-   `null` and `empty` casting for `null`, `(null)`, `empty`, `(empty)`.
+-   Quoted strings with escaped quotes and `\n`, `\r`, `\t`.
+-   Inline comments using `#` (escaped with `\#` in values).
+-   `export KEY=value` support.
+-   Numbers are returned as strings unless you cast them yourself.
 
-## 🧪 Testing
+## Testing
 
 You can run tests with the command:
 
@@ -70,10 +74,10 @@ You can run tests with the command:
 composer test
 ```
 
-## 👨‍💻 Author
+## Author
 
 [**Kirill Kolesnikov**](https://github.com/KolesnikovKirill)
 
-## 📜 License
+## License
 
 [MIT](https://github.com/codemonster-ru/env/blob/main/LICENSE)

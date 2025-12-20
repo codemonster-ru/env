@@ -13,24 +13,26 @@ class Env
         $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         foreach ($lines as $line) {
-            $line = trim($line);
+            $parsed = self::parseLine($line);
 
-            if ($line === '' || str_starts_with($line, '#')) {
+            if ($parsed === null) {
                 continue;
             }
 
-            [$name, $value] = array_pad(explode('=', $line, 2), 2, null);
+            [$name, $value] = $parsed;
 
-            $name = trim($name);
-            $value = trim($value ?? '');
-            $value = self::stripQuotes($value);
-
-            if (!array_key_exists($name, $_ENV) && !array_key_exists($name, $_SERVER)) {
-                $_ENV[$name] = $value;
-                $_SERVER[$name] = $value;
-
-                putenv("$name=$value");
+            if (
+                array_key_exists($name, $_ENV) ||
+                array_key_exists($name, $_SERVER) ||
+                getenv($name) !== false
+            ) {
+                continue;
             }
+
+            $_ENV[$name] = $value;
+            $_SERVER[$name] = $value;
+
+            putenv("$name=$value");
         }
     }
 
@@ -53,16 +55,206 @@ class Env
         return self::castValue($value);
     }
 
-    protected static function stripQuotes(string $value): string
+    protected static function parseLine(string $line): ?array
     {
-        if (
-            (str_starts_with($value, '"') && str_ends_with($value, '"')) ||
-            (str_starts_with($value, "'") && str_ends_with($value, "'"))
-        ) {
-            return substr($value, 1, -1);
+        $line = trim($line);
+
+        if ($line === '' || str_starts_with($line, '#')) {
+            return null;
+        }
+
+        if (str_starts_with($line, 'export ')) {
+            $line = trim(substr($line, 7));
+        }
+
+        $pos = self::findUnquotedEquals($line);
+
+        if ($pos === null) {
+            $name = trim($line);
+
+            return $name === '' ? null : [$name, ''];
+        }
+
+        $name = trim(substr($line, 0, $pos));
+
+        if ($name === '') {
+            return null;
+        }
+
+        $value = trim(substr($line, $pos + 1));
+
+        if ($value === '') {
+            return [$name, ''];
+        }
+
+        $first = $value[0];
+
+        if ($first === '"' || $first === "'") {
+            return [$name, self::parseQuotedValue($value, $first)];
+        }
+
+        $value = self::stripInlineComment($value);
+        $value = self::unescapeUnquotedValue($value);
+
+        return [$name, $value];
+    }
+
+    protected static function findUnquotedEquals(string $line): ?int
+    {
+        $inSingle = false;
+        $inDouble = false;
+        $escaped = false;
+        $length = strlen($line);
+
+        for ($i = 0; $i < $length; $i++) {
+            $ch = $line[$i];
+
+            if ($escaped) {
+                $escaped = false;
+
+                continue;
+            }
+
+            if ($ch === '\\') {
+                $escaped = true;
+
+                continue;
+            }
+
+            if ($ch === "'" && !$inDouble) {
+                $inSingle = !$inSingle;
+
+                continue;
+            }
+
+            if ($ch === '"' && !$inSingle) {
+                $inDouble = !$inDouble;
+
+                continue;
+            }
+
+            if ($ch === '=' && !$inSingle && !$inDouble) {
+                return $i;
+            }
+        }
+
+        return null;
+    }
+
+    protected static function parseQuotedValue(string $value, string $quote): string
+    {
+        $out = '';
+        $escaped = false;
+        $length = strlen($value);
+
+        for ($i = 1; $i < $length; $i++) {
+            $ch = $value[$i];
+
+            if ($escaped) {
+                $out .= self::unescapeChar($ch);
+                $escaped = false;
+
+                continue;
+            }
+
+            if ($ch === '\\') {
+                $escaped = true;
+
+                continue;
+            }
+
+            if ($ch === $quote) {
+                $rest = trim(substr($value, $i + 1));
+
+                if ($rest !== '' && !str_starts_with($rest, '#')) {
+                    // Ignore trailing non-comment content.
+                }
+
+                return $out;
+            }
+
+            $out .= $ch;
+        }
+
+        return $quote . $out;
+    }
+
+    protected static function unescapeChar(string $ch): string
+    {
+        return match ($ch) {
+            'n' => "\n",
+            'r' => "\r",
+            't' => "\t",
+            '\\' => '\\',
+            '"' => '"',
+            "'" => "'",
+            default => $ch,
+        };
+    }
+
+    protected static function stripInlineComment(string $value): string
+    {
+        $escaped = false;
+        $length = strlen($value);
+
+        for ($i = 0; $i < $length; $i++) {
+            $ch = $value[$i];
+
+            if ($escaped) {
+                $escaped = false;
+
+                continue;
+            }
+
+            if ($ch === '\\') {
+                $escaped = true;
+
+                continue;
+            }
+
+            if ($ch === '#') {
+                return rtrim(substr($value, 0, $i));
+            }
         }
 
         return $value;
+    }
+
+    protected static function unescapeUnquotedValue(string $value): string
+    {
+        $out = '';
+        $escaped = false;
+        $length = strlen($value);
+
+        for ($i = 0; $i < $length; $i++) {
+            $ch = $value[$i];
+
+            if ($escaped) {
+                if ($ch === '#' || $ch === '=' || $ch === '\\') {
+                    $out .= $ch;
+                } else {
+                    $out .= '\\' . $ch;
+                }
+
+                $escaped = false;
+
+                continue;
+            }
+
+            if ($ch === '\\') {
+                $escaped = true;
+
+                continue;
+            }
+
+            $out .= $ch;
+        }
+
+        if ($escaped) {
+            $out .= '\\';
+        }
+
+        return $out;
     }
 
     protected static function castValue(string $value): mixed

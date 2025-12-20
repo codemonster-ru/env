@@ -2,7 +2,19 @@
 
 All notable changes to this package will be documented in this file.
 
-## [Unreleased]
+## [2.1.0] - 2025-12-20
+
+### Added
+
+-   Support for inline comments, escaped `#`/`=`, and `export KEY=value` lines.
+-   Support for escaped quotes and `\n`, `\r`, `\t` inside quoted values.
+-   Tests covering new parsing behavior and getenv precedence.
+
+### Changed
+
+-   `.env` parsing now handles spaces around `=` and quoted values with trailing comments.
+-   Loading respects variables already present in `getenv()`.
+-   README updated with parsing rules and examples.
 
 ## [2.0.1] - 2025-10-05
 
