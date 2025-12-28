@@ -4,269 +4,179 @@ namespace Codemonster\Env;
 
 class Env
 {
-    public static function load(string $path): void
+    private static ?LoaderInterface $defaultLoader = null;
+    private static ?ParserInterface $defaultParser = null;
+
+    public static function setDefaultLoader(?LoaderInterface $loader): void
     {
-        if (!is_file($path)) {
-            throw new \InvalidArgumentException("Env file not found: $path");
-        }
+        self::$defaultLoader = $loader;
+    }
 
-        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    public static function setDefaultParser(?ParserInterface $parser): void
+    {
+        self::$defaultParser = $parser;
+        self::$defaultLoader = null;
+    }
 
-        foreach ($lines as $line) {
-            $parsed = self::parseLine($line);
+    public static function reset(): void
+    {
+        self::getDefaultLoaderInternal()->resetLoaded();
+        self::$defaultParser = null;
+    }
 
-            if ($parsed === null) {
-                continue;
-            }
+    public static function load(
+        string $path,
+        ?string $encoding = null,
+        ?int $maxBytes = null,
+        bool $strictResolve = false
+    ): void {
+        self::getDefaultLoaderInternal()->loadFile($path, $encoding, $maxBytes, $strictResolve);
+    }
 
-            [$name, $value] = $parsed;
+    public static function loadString(
+        string $content,
+        ?string $encoding = null,
+        bool $strictResolve = false,
+        ?int $maxBytes = null
+    ): void {
+        self::getDefaultLoaderInternal()->loadString($content, $encoding, $strictResolve, $maxBytes);
+    }
 
-            if (
-                array_key_exists($name, $_ENV) ||
-                array_key_exists($name, $_SERVER) ||
-                getenv($name) !== false
-            ) {
-                continue;
-            }
+    public static function safeLoad(
+        string $path,
+        ?string $encoding = null,
+        ?int $maxBytes = null,
+        bool $strictResolve = false
+    ): bool {
+        return self::getDefaultLoaderInternal()->safeLoadFile($path, $encoding, $maxBytes, $strictResolve);
+    }
 
-            $_ENV[$name] = $value;
-            $_SERVER[$name] = $value;
+    public static function safeLoadString(
+        string $content,
+        ?string $encoding = null,
+        bool $strictResolve = false,
+        ?int $maxBytes = null
+    ): bool {
+        return self::getDefaultLoaderInternal()->safeLoadString(
+            $content,
+            $encoding,
+            $strictResolve,
+            $maxBytes
+        );
+    }
 
-            putenv("$name=$value");
-        }
+    public static function loadFiles(
+        iterable $paths,
+        ?string $encoding = null,
+        ?int $maxBytes = null,
+        bool $strictResolve = false,
+        bool $shortCircuit = true,
+        ?int $globFlags = null
+    ): void {
+        self::getDefaultLoaderInternal()->loadFiles(
+            $paths,
+            $encoding,
+            $maxBytes,
+            $strictResolve,
+            $shortCircuit,
+            $globFlags
+        );
+    }
+
+    public static function safeLoadFiles(
+        iterable $paths,
+        ?string $encoding = null,
+        ?int $maxBytes = null,
+        bool $strictResolve = false,
+        bool $shortCircuit = true,
+        ?int $globFlags = null
+    ): bool {
+        return self::getDefaultLoaderInternal()->safeLoadFiles(
+            $paths,
+            $encoding,
+            $maxBytes,
+            $strictResolve,
+            $shortCircuit,
+            $globFlags
+        );
     }
 
     public static function get(string $key, mixed $default = null): mixed
     {
         if (array_key_exists($key, $_ENV)) {
-            return self::castValue($_ENV[$key]);
+            return $_ENV[$key];
         }
 
         if (array_key_exists($key, $_SERVER)) {
-            return self::castValue($_SERVER[$key]);
+            return $_SERVER[$key];
         }
 
         $value = getenv($key);
 
-        if ($value === false) {
-            return $default;
-        }
-
-        return self::castValue($value);
+        return $value === false ? $default : $value;
     }
 
-    protected static function parseLine(string $line): ?array
-    {
-        $line = trim($line);
+    public static function parse(
+        string $content,
+        ?string $encoding = null,
+        bool $strict = false
+    ): array {
+        $entries = EnvParser::parseStringRaw($content, $encoding);
 
-        if ($line === '' || str_starts_with($line, '#')) {
-            return null;
-        }
+        if ($strict) {
+            $seen = [];
 
-        if (str_starts_with($line, 'export ')) {
-            $line = trim(substr($line, 7));
-        }
+            foreach ($entries as $entry) {
+                $name = $entry[0];
 
-        $pos = self::findUnquotedEquals($line);
-
-        if ($pos === null) {
-            $name = trim($line);
-
-            return $name === '' ? null : [$name, ''];
-        }
-
-        $name = trim(substr($line, 0, $pos));
-
-        if ($name === '') {
-            return null;
-        }
-
-        $value = trim(substr($line, $pos + 1));
-
-        if ($value === '') {
-            return [$name, ''];
-        }
-
-        $first = $value[0];
-
-        if ($first === '"' || $first === "'") {
-            return [$name, self::parseQuotedValue($value, $first)];
-        }
-
-        $value = self::stripInlineComment($value);
-        $value = self::unescapeUnquotedValue($value);
-
-        return [$name, $value];
-    }
-
-    protected static function findUnquotedEquals(string $line): ?int
-    {
-        $inSingle = false;
-        $inDouble = false;
-        $escaped = false;
-        $length = strlen($line);
-
-        for ($i = 0; $i < $length; $i++) {
-            $ch = $line[$i];
-
-            if ($escaped) {
-                $escaped = false;
-
-                continue;
-            }
-
-            if ($ch === '\\') {
-                $escaped = true;
-
-                continue;
-            }
-
-            if ($ch === "'" && !$inDouble) {
-                $inSingle = !$inSingle;
-
-                continue;
-            }
-
-            if ($ch === '"' && !$inSingle) {
-                $inDouble = !$inDouble;
-
-                continue;
-            }
-
-            if ($ch === '=' && !$inSingle && !$inDouble) {
-                return $i;
-            }
-        }
-
-        return null;
-    }
-
-    protected static function parseQuotedValue(string $value, string $quote): string
-    {
-        $out = '';
-        $escaped = false;
-        $length = strlen($value);
-
-        for ($i = 1; $i < $length; $i++) {
-            $ch = $value[$i];
-
-            if ($escaped) {
-                $out .= self::unescapeChar($ch);
-                $escaped = false;
-
-                continue;
-            }
-
-            if ($ch === '\\') {
-                $escaped = true;
-
-                continue;
-            }
-
-            if ($ch === $quote) {
-                $rest = trim(substr($value, $i + 1));
-
-                if ($rest !== '' && !str_starts_with($rest, '#')) {
-                    // Ignore trailing non-comment content.
+                if (isset($seen[$name])) {
+                    throw new Exception\InvalidFileException("Duplicate entry for {$name}.");
                 }
 
-                return $out;
-            }
-
-            $out .= $ch;
-        }
-
-        return $quote . $out;
-    }
-
-    protected static function unescapeChar(string $ch): string
-    {
-        return match ($ch) {
-            'n' => "\n",
-            'r' => "\r",
-            't' => "\t",
-            '\\' => '\\',
-            '"' => '"',
-            "'" => "'",
-            default => $ch,
-        };
-    }
-
-    protected static function stripInlineComment(string $value): string
-    {
-        $escaped = false;
-        $length = strlen($value);
-
-        for ($i = 0; $i < $length; $i++) {
-            $ch = $value[$i];
-
-            if ($escaped) {
-                $escaped = false;
-
-                continue;
-            }
-
-            if ($ch === '\\') {
-                $escaped = true;
-
-                continue;
-            }
-
-            if ($ch === '#') {
-                return rtrim(substr($value, 0, $i));
+                $seen[$name] = true;
             }
         }
 
-        return $value;
+        return $entries;
     }
 
-    protected static function unescapeUnquotedValue(string $value): string
-    {
-        $out = '';
-        $escaped = false;
-        $length = strlen($value);
+    public static function parseToArray(
+        string $content,
+        ?string $encoding = null,
+        bool $strict = false
+    ): array {
+        $entries = EnvParser::parseStringRaw($content, $encoding);
+        $parsed = [];
 
-        for ($i = 0; $i < $length; $i++) {
-            $ch = $value[$i];
+        foreach ($entries as $entry) {
+            $name = $entry[0];
 
-            if ($escaped) {
-                if ($ch === '#' || $ch === '=' || $ch === '\\') {
-                    $out .= $ch;
-                } else {
-                    $out .= '\\' . $ch;
-                }
-
-                $escaped = false;
-
-                continue;
+            if ($strict && array_key_exists($name, $parsed)) {
+                throw new Exception\InvalidFileException("Duplicate entry for {$name}.");
             }
 
-            if ($ch === '\\') {
-                $escaped = true;
-
-                continue;
-            }
-
-            $out .= $ch;
+            $parsed[$name] = $entry[1];
         }
 
-        if ($escaped) {
-            $out .= '\\';
-        }
-
-        return $out;
+        return $parsed;
     }
 
-    protected static function castValue(string $value): mixed
+    public static function getDefaultLoader(): LoaderInterface
     {
-        $lower = strtolower($value);
+        return self::getDefaultLoaderInternal();
+    }
 
-        return match ($lower) {
-            'true', '(true)' => true,
-            'false', '(false)' => false,
-            'null', '(null)' => null,
-            'empty', '(empty)' => '',
-            default => $value,
-        };
+    public static function getDefaultParser(): ?ParserInterface
+    {
+        return self::$defaultParser;
+    }
+
+    protected static function getDefaultLoaderInternal(): LoaderInterface
+    {
+        if (self::$defaultLoader === null) {
+            self::$defaultLoader = new EnvLoader(self::$defaultParser);
+        }
+
+        return self::$defaultLoader;
     }
 }

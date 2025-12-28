@@ -24,6 +24,9 @@
     "require-dev": {
         "phpunit/phpunit": "^9.6 || ^10.5 || ^11.0 || ^12.0"
     },
+    "suggest": {
+        "ext-mbstring": "Required for non-UTF-8 .env encodings."
+    },
     "scripts": {
         "test": "phpunit --colors=always --testdox"
     },

@@ -2,6 +2,27 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.2.0] - 2025-12-28
+
+### Added
+
+-   Loader/Parser interfaces and default parser customization.
+-   `loadString`, `loadFiles`, `safeLoad*` helpers with size limits and strict resolve mode.
+-   Optional glob flags for `loadFiles` and glob sorting for stable order.
+-   Strict parsing options for `parse()`/`parseToArray()` and BOM handling tests.
+-   `$VAR` expansion support and ASCII-only name mode in `DefaultParser`.
+
+### Changed
+
+-   Lines without `=` are treated as empty strings.
+-   Multi-line parsing detects whitespace around `=` and throws on unterminated quotes.
+-   `Env` is a facade over `EnvLoader`/`EnvParser`, with injectable defaults.
+-   README expanded with usage, exceptions, and new options.
+
+### Fixed
+
+-   Strict resolve now reports unresolved variables in multi-file loads.
+
 ## [2.1.0] - 2025-12-20
 
 ### Added
