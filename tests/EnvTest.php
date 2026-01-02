@@ -70,6 +70,30 @@ class EnvTest extends TestCase
         $this->assertSame('empty', Env::get('EMPTY_VALUE'));
     }
 
+    public function testEnvGetCastCastsCommonValues(): void
+    {
+        $this->assertTrue(Env::getCast('FEATURE_ENABLED', null, true));
+        $this->assertFalse(Env::getCast('FEATURE_DISABLED', null, true));
+        $this->assertNull(Env::getCast('OPTIONAL_VALUE', 'fallback', true));
+        $this->assertSame('', Env::getCast('EMPTY_VALUE', 'fallback', true));
+        $this->assertSame('MyApp', Env::getCast('APP_NAME', null, true));
+        $this->assertSame('default', Env::getCast('NOT_DEFINED', 'default', true));
+    }
+
+    public function testEnvGetCastStripsWrappingQuotes(): void
+    {
+        unset($_ENV['CAST_QUOTED'], $_SERVER['CAST_QUOTED']);
+        putenv('CAST_QUOTED');
+        putenv('CAST_QUOTED="hello"');
+
+        try {
+            $this->assertSame('hello', Env::getCast('CAST_QUOTED', null, true));
+        } finally {
+            unset($_ENV['CAST_QUOTED'], $_SERVER['CAST_QUOTED']);
+            putenv('CAST_QUOTED');
+        }
+    }
+
     public function testEnvRemovesQuotes(): void
     {
         $this->assertSame('http://localhost:3000', Env::get('SSR_URL'));

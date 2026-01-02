@@ -116,6 +116,25 @@ class Env
         return $value === false ? $default : $value;
     }
 
+    public static function getCast(string $key, mixed $default = null, bool $cast = false): mixed
+    {
+        if (!$cast) {
+            return self::get($key, $default);
+        }
+
+        if (array_key_exists($key, $_ENV)) {
+            return self::castValue($_ENV[$key]);
+        }
+
+        if (array_key_exists($key, $_SERVER)) {
+            return self::castValue($_SERVER[$key]);
+        }
+
+        $value = getenv($key);
+
+        return $value === false ? $default : self::castValue($value);
+    }
+
     public static function parse(
         string $content,
         ?string $encoding = null,
@@ -178,5 +197,39 @@ class Env
         }
 
         return self::$defaultLoader;
+    }
+
+    private static function castValue(mixed $value): mixed
+    {
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        $trimmed = trim($value);
+        $lower = strtolower($trimmed);
+
+        return match ($lower) {
+            'true', '(true)' => true,
+            'false', '(false)' => false,
+            'empty', '(empty)' => '',
+            'null', '(null)' => null,
+            default => self::stripQuotes($trimmed) ?? $value,
+        };
+    }
+
+    private static function stripQuotes(string $value): ?string
+    {
+        if (strlen($value) < 2) {
+            return null;
+        }
+
+        $first = $value[0];
+        $last = $value[strlen($value) - 1];
+
+        if (($first === '"' || $first === "'") && $last === $first) {
+            return substr($value, 1, -1);
+        }
+
+        return null;
     }
 }

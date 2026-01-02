@@ -2,6 +2,16 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.0] - 2026-01-03
+
+### Added
+
+-   `Env::getCast()` for optional casting of common string values.
+
+### Tests
+
+-   Added coverage for `Env::getCast()` casting behavior.
+
 ## [2.2.0] - 2025-12-28
 
 ### Added

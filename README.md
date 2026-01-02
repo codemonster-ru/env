@@ -48,6 +48,13 @@ Env::load(__DIR__ . '/.env');
 echo Env::get('APP_NAME'); // "MyApp"
 ```
 
+Optional casting:
+
+```php
+Env::getCast('FEATURE_ENABLED', false, true); // true
+Env::getCast('OPTIONAL_VALUE', 'default', true); // null
+```
+
 Common options:
 
 ```php
@@ -104,14 +111,14 @@ $loader->loadFiles([__DIR__ . '/.env', __DIR__ . '/.env.local']);
 
 Notes:
 
-- When encoding is null, no conversion is performed, even if mbstring is available.
-- UTF-8 BOM is stripped automatically.
+-   When encoding is null, no conversion is performed, even if mbstring is available.
+-   UTF-8 BOM is stripped automatically.
 
 ## Features
 
 -   Loading `.env` files into `$_ENV`, `$_SERVER`, and via `putenv()`.
 -   Does not override variables already present in `$_ENV`, `$_SERVER`, or `getenv()`.
--   Values are returned as strings; no automatic casting is applied.
+-   Values are returned as strings by default; `Env::getCast()` enables optional casting.
 -   Quoted strings with escaped quotes and `\n`, `\r`, `\t`, `\v`, `\f` in double quotes (single quotes are literal).
 -   Inline comments start with `#` in unquoted values (use quotes to keep a literal `#`).
 -   Unquoted values cannot contain whitespace.
@@ -128,31 +135,31 @@ Notes:
 
 ## Parse Formats
 
-| Method | Return format |
-| --- | --- |
-| `Env::parse()` | Raw entries: `[[name, value, vars], ...]` |
-| `Env::parseToArray()` | Associative map: `['NAME' => 'value', ...]` |
-| `EnvParser::parseStringRaw()` | Raw entries: `[[name, value, vars], ...]` |
+| Method                        | Return format                               |
+| ----------------------------- | ------------------------------------------- |
+| `Env::parse()`                | Raw entries: `[[name, value, vars], ...]`   |
+| `Env::parseToArray()`         | Associative map: `['NAME' => 'value', ...]` |
+| `EnvParser::parseStringRaw()` | Raw entries: `[[name, value, vars], ...]`   |
 
 Strict mode throws `InvalidFileException` on duplicate names for `parse()` and `parseToArray()`.
 
 ## Load Files Order
 
-- `loadFiles()` processes paths in the order provided.
-- Glob patterns are expanded using `glob()` with `GLOB_BRACE` by default.
-- Glob matches are sorted to keep load order stable.
-- Use the optional `globFlags` parameter to change `glob()` behavior.
-- If `strictResolve` is true, unresolved `${VAR}` or `$VAR` references in any loaded file will throw `InvalidFileException`.
-- If `shortCircuit` is true, the first successfully loaded file stops further processing.
-- If `shortCircuit` is false, missing files raise `InvalidPathException`.
+-   `loadFiles()` processes paths in the order provided.
+-   Glob patterns are expanded using `glob()` with `GLOB_BRACE` by default.
+-   Glob matches are sorted to keep load order stable.
+-   Use the optional `globFlags` parameter to change `glob()` behavior.
+-   If `strictResolve` is true, unresolved `${VAR}` or `$VAR` references in any loaded file will throw `InvalidFileException`.
+-   If `shortCircuit` is true, the first successfully loaded file stops further processing.
+-   If `shortCircuit` is false, missing files raise `InvalidPathException`.
 
 ## Exceptions
 
-| Scenario | Exception |
-| --- | --- |
-| Invalid syntax, invalid name, bad escapes | `Codemonster\Env\Exception\InvalidFileException` |
-| Invalid or unsupported encoding | `Codemonster\Env\Exception\InvalidEncodingException` |
-| Missing or unreadable file | `Codemonster\Env\Exception\InvalidPathException` |
+| Scenario                                  | Exception                                            |
+| ----------------------------------------- | ---------------------------------------------------- |
+| Invalid syntax, invalid name, bad escapes | `Codemonster\Env\Exception\InvalidFileException`     |
+| Invalid or unsupported encoding           | `Codemonster\Env\Exception\InvalidEncodingException` |
+| Missing or unreadable file                | `Codemonster\Env\Exception\InvalidPathException`     |
 
 ## Loader Interface
 
